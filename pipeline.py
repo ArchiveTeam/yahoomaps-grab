@@ -57,7 +57,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20150618.08"
+VERSION = "20150619.01"
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'yahoomaps'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -166,19 +166,19 @@ class WgetArgs(object):
             WGET_LUA,
             "-U", USER_AGENT,
             "-nv",
---            "--lua-script", "yahoomaps.lua",
+            "--lua-script", "yahoomaps.lua",
             "-o", ItemInterpolation("%(item_dir)s/wget.log"),
             "--no-check-certificate",
             "--output-document", ItemInterpolation("%(item_dir)s/wget.tmp"),
             "--truncate-output",
             "-e", "robots=off",
             "--rotate-dns",
---            "--recursive", "--level=inf",
+#            "--recursive", "--level=inf",
             "--no-parent",
---            "--page-requisites",
+#            "--page-requisites",
             "--timeout", "30",
             "--tries", "inf",
-            "--domains", "yahoo.com",
+            "--domains", "yahoo.com,here.com",
             "--span-hosts",
             "--waitretry", "30",
             "--warc-file", ItemInterpolation("%(item_dir)s/%(warc_file_base)s"),
@@ -198,11 +198,13 @@ class WgetArgs(object):
         
         if item_type == 'tiles':
             tile_layer, tile_num, tile_range = item_value.split(':')
-            tile_start, tile_end = tile_range.split('-', 1)
-            for tilenum in range(tile_start, tile_end, 1):
-                wget_args.append('http://1.base.maps.api.here.com/maptile/2.1/maptile/187ddf591c/normal.day/{1}/{2}/{3}/256/png8?lg=ENG&token=a&requestid=yahoo.prod&app_id=eAdkWGYRoc4RfxVo0Z4B'.format(tile_layer, tile_num, tilenum))
-                wget_args.append('http://1.aerial.maps.api.here.com/maptile/2.1/maptile/187ddf591c/hybrid.day/{1}/{2}/{3}/256/jpg?lg=ENG&token=a&requestid=yahoo.prod&app_id=eAdkWGYRoc4RfxVo0Z4B'.format(tile_layer, tile_num, tilenum))
-                wget_args.append('http://1.aerial.maps.api.here.com/maptile/2.1/maptile/187ddf591c/satellite.day/{1}/{2}/{3}/256/jpg?lg=ENG&token=a&requestid=yahoo.prod&app_id=eAdkWGYRoc4RfxVo0Z4B'.format(tile_layer, tile_num, tilenum))
+            tile_start, tile_end = tile_range.split('-')
+            print(tile_start)
+            print(tile_end)
+            for tilenum in range(int(tile_start), int(tile_end)):
+                wget_args.append('http://1.base.maps.api.here.com/maptile/2.1/maptile/187ddf591c/normal.day/{0}/{1}/{2}/256/png8?lg=ENG&token=TrLJuXVK62IQk0vuXFzaig%3D%3D&requestid=yahoo.prod&app_id=eAdkWGYRoc4RfxVo0Z4B'.format(tile_layer, tile_num, tilenum))
+                wget_args.append('http://1.aerial.maps.api.here.com/maptile/2.1/maptile/187ddf591c/hybrid.day/{0}/{1}/{2}/256/jpg?lg=ENG&token=TrLJuXVK62IQk0vuXFzaig%3D%3D&requestid=yahoo.prod&app_id=eAdkWGYRoc4RfxVo0Z4B'.format(tile_layer, tile_num, tilenum))
+                wget_args.append('http://1.aerial.maps.api.here.com/maptile/2.1/maptile/187ddf591c/satellite.day/{0}/{1}/{2}/256/jpg?lg=ENG&token=TrLJuXVK62IQk0vuXFzaig%3D%3D&requestid=yahoo.prod&app_id=eAdkWGYRoc4RfxVo0Z4B'.format(tile_layer, tile_num, tilenum))
         else:
             raise Exception('Unknown item')
         
